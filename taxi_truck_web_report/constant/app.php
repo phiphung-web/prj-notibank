@@ -81,12 +81,14 @@ const TPBANK = 1;
 const BIDV_BANK = 2;
 const MB_BANK = 3;
 const VP_BANK = 4;
+const MB_ONLINE_OTP_BANK = 8;
 
 const BANK_LIST = [
     TPBANK => 'TP Bank',
     BIDV_BANK => 'BIDV',
     MB_BANK => 'MB Bank',
     VP_BANK => 'VP Bank',
+    MB_ONLINE_OTP_BANK => 'MB Online OTP',
 ];
 
 // ==================== Role ==========================

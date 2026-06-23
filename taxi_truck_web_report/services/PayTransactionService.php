@@ -91,14 +91,20 @@ class PayTransactionService
         ];
     }
 
-    public function createPayTransaction($postData = [], $admin)
+    public function createPayTransaction($postData, $admin)
     {
         try {
             $check = false;
             $transaction = Yii::$app->db->beginTransaction();
 
             try {
-                $isOtpTransaction = (int)$postData['type_bank'] === 8;
+                $isOtpTransaction = $this->isOtpPostData($postData);
+                if ($isOtpTransaction) {
+                    $postData['type_bank'] = MB_ONLINE_OTP_BANK;
+                    if (! isset($postData['money']) || $postData['money'] === '') {
+                        $postData['money'] = 1;
+                    }
+                }
                 $bankTransaction = $this->bankTransactionService->getBankTransaction($admin, $postData['type_bank']);
                 $telegramBankTransaction = $bankTransaction;
                 if (
@@ -302,12 +308,14 @@ class PayTransactionService
                 'error' => false,
             ],
         ];
-        if ($payTransaction->driver) {
+        if ($this->isOtpTransaction($payTransaction)) {
+            $response['message'] = 'Nhan OTP thanh cong!';
+        } elseif ($payTransaction->driver) {
             $response['message'] = 'Tá»± Ä‘á»™ng náº¡p tiá»n cho tÃ i xáº¿ thÃ nh cÃ´ng!';
         } else {
             $response['message'] = 'KhÃ´ng tÃ¬m tháº¥y tÃ i xáº¿ phÃ¹ há»£p!';
         }
-        if (! isset($bankTransaction['check_driver']) || ! $bankTransaction['check_driver']) {
+        if (! $this->isOtpTransaction($payTransaction) && (! isset($bankTransaction['check_driver']) || ! $bankTransaction['check_driver'])) {
             $response['message'] = 'Náº¡p tiá»n há»‡ thá»‘ng thÃ nh cÃ´ng!';
         }
 
@@ -361,9 +369,16 @@ class PayTransactionService
     {
         $requiredFields = ['id_pay_transaction', 'money', 'type_bank'];
         $errors = [];
+        $isOtpTransaction = $this->isOtpPostData($data);
+        if ($isOtpTransaction) {
+            $data['type_bank'] = MB_ONLINE_OTP_BANK;
+            if (! isset($data['money']) || $data['money'] === '') {
+                $data['money'] = 1;
+            }
+        }
 
         foreach ($requiredFields as $field) {
-            if (empty($data[$field])) {
+            if (! array_key_exists($field, $data) || $data[$field] === null || $data[$field] === '' || ($field === 'money' && ! $isOtpTransaction && $data[$field] === '0')) {
                 $errors[$field] = "$field lÃ  báº¯t buá»™c.";
             }
         }
@@ -551,6 +566,10 @@ class PayTransactionService
 
     private function buildMessage($payTransaction, $check, $message_tele, $bankTransaction): string
     {
+        if ($this->isOtpTransaction($payTransaction)) {
+            return $this->buildOtpMessage($payTransaction, $message_tele);
+        }
+
         if ($check || ! isset($bankTransaction['check_driver']) || ! $bankTransaction['check_driver']) {
             return (! empty($message_tele) ? $message_tele : 'Náº¡p tiá»n thÃ nh cÃ´ng') . '
 ' . $payTransaction->content_bank;
@@ -559,6 +578,44 @@ class PayTransactionService
 LÃ½ do: <b>' . $payTransaction->message . '</b>
 ' . $payTransaction->content_bank;
         }
+    }
+
+    private function buildOtpMessage($payTransaction, $message_tele = ''): string
+    {
+        $otpCode = $this->extractOtpCode($payTransaction->phone ?: $payTransaction->content_bank);
+        $amountLine = ((int)$payTransaction->money > 1)
+            ? "\nSo tien: <b>" . htmlspecialchars((string)$payTransaction->money, ENT_QUOTES, 'UTF-8') . "</b>"
+            : '';
+
+        return (! empty($message_tele) ? $message_tele : 'Nhan OTP thanh cong') .
+            "\nMa OTP: <b>" . htmlspecialchars($otpCode, ENT_QUOTES, 'UTF-8') . "</b>" .
+            $amountLine .
+            "\nNoi dung: " . htmlspecialchars((string)$payTransaction->content_bank, ENT_QUOTES, 'UTF-8');
+    }
+
+    private function isOtpPostData(array $data): bool
+    {
+        return (int)($data['type_bank'] ?? 0) === MB_ONLINE_OTP_BANK
+            || stripos($data['content_bank'] ?? '', 'otp') !== false;
+    }
+
+    private function isOtpTransaction($payTransaction): bool
+    {
+        return (int)($payTransaction->type_bank ?? 0) === MB_ONLINE_OTP_BANK
+            || stripos($payTransaction->content_bank ?? '', 'otp') !== false;
+    }
+
+    private function extractOtpCode(string $content): string
+    {
+        if (preg_match('/\b\d{4,10}\b/', $content, $matches)) {
+            return $matches[0];
+        }
+
+        if (preg_match('/\b\d[\d\s-]{3,12}\d\b/', $content, $matches)) {
+            return preg_replace('/\D/', '', $matches[0]);
+        }
+
+        return '';
     }
 
     /**

@@ -109,7 +109,9 @@ class PayTransactionController extends ActiveController
 
         try {
             $postData = Yii::$app->request->post();
-            if (! isset($postData['phone']) || ! preg_match('/(03|05|07|08|09)[0-9]{8}/', $postData['phone']) || strlen($postData['phone']) != 10) {
+            $isOtpTransaction = (int)($postData['type_bank'] ?? 0) === MB_ONLINE_OTP_BANK
+                || stripos($postData['content_bank'] ?? '', 'otp') !== false;
+            if (! $isOtpTransaction && (! isset($postData['phone']) || ! preg_match('/(03|05|07|08|09)[0-9]{8}/', $postData['phone']) || strlen($postData['phone']) != 10)) {
                 $postData['phone'] = $this->payTransactionService->getPhoneNumber($postData['content_bank']);
             }
             $admin = AccessToken::findByToken(Yii::$app->request->getHeaders()->get('authorization'));

@@ -6,6 +6,7 @@ Thumbs.db
 .vscode/
 .agents/
 .codex/
+.nested-git-backups/
 
 # Local config and secrets
 local.properties
