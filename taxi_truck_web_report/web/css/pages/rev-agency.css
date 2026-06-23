@@ -1,0 +1,428 @@
+.pse-12 {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+#datatables_w0 td,
+#datatables_w0 th {
+  vertical-align: middle;
+}
+
+.table-view-list.table-revenue-booking .table thead tr th:last-child {
+  max-width: none;
+}
+
+.rev-agency-search .fields .form-group {
+  max-width: 300px;
+  width: 100%;
+}
+
+.rev-booking-search .fields {
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.rev-booking-search .fields .form-group {
+  margin-bottom: 0;
+}
+
+.rev-booking-search .fields .form-group #revenue-status {
+  display: grid;
+  grid-gap: 2rem;
+  grid-template-columns: repeat(3, max-content);
+}
+
+.rev-booking-search .fields .form-group #revenue-status label {
+  margin: 0;
+}
+
+.statistical-booking .table-view-list table th,
+.statistical-booking .table-view-list table td {
+  vertical-align: middle;
+}
+
+.table-revenue-booking .table-box {
+  background-color: #ffffff;
+}
+
+.table-revenue-booking .table-box__heading,
+.table-revenue-booking .booking-list {
+  display: grid;
+  grid-template-columns: 6% 8% 1fr 10%;
+  align-items: center;
+  text-align: center;
+}
+
+.table-revenue-booking .table-box__heading > div {
+  padding: 12px;
+  border-right: 1px solid #f4f4f4;
+  height: 100%;
+  font-weight: bold;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.table-revenue-booking .table-box__heading .source,
+.table-revenue-booking .booking-list__source .group-source-trip-type {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+}
+
+.table-revenue-booking .table-box__heading .source,
+.table-revenue-booking .booking-list .booking-list__source {
+  padding: 0;
+}
+
+.table-revenue-booking .table-box__heading .source > div,
+.table-revenue-booking .booking-list__source .group-source-trip-type > div {
+  padding: 12px;
+}
+
+.table-revenue-booking .table-box__heading .source__heading,
+.table-revenue-booking .booking-list .group-source-trip-type .heading {
+  border-right: 1px solid #f4f4f4;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.table-revenue-booking .table-box__heading .source .status {
+  padding: 0;
+}
+
+.table-revenue-booking .table-box__heading .status__heading {
+  padding: 12px;
+  border-bottom: 1px solid #f4f4f4;
+}
+
+.table-revenue-booking .table-box__heading .status .status__list,
+.table-revenue-booking .booking-list__source .group-source-trip-type .status {
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.table-revenue-booking .table-box__heading .status .status__list .item,
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .status
+  .item {
+  padding: 12px 0;
+}
+
+.table-revenue-booking .table-box__heading .status .status__list .item ~ .item {
+  border-left: 1px solid #f4f4f4;
+}
+
+.table-revenue-booking .booking-list {
+  border-top: 1px solid #f4f4f4;
+}
+
+.table-revenue-booking .booking-list:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.table-revenue-booking .booking-list > div {
+  padding: 12px;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.table-revenue-booking .booking-list > div:not(:last-child) {
+  border-right: 1px solid #f4f4f4;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  ~ .group-source-trip-type {
+  border-top: 1px solid #f4f4f4;
+}
+
+.table-revenue-booking .booking-list__source .group-source-trip-type > div {
+  text-align: center;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .item-reject {
+  display: grid;
+  grid-gap: 6px;
+  grid-template-columns: 1fr auto;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .reason-reject-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .status
+  .item {
+  padding-left: 12px;
+  padding-right: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .status
+  .item:not(:last-child) {
+  border-right: 1px solid #f4f4f4;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .status
+  .reason-reject-list {
+  text-align: left;
+  border-right: 1px solid #f4f4f4;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .status
+  .reason-reject-list
+  li {
+  padding: 12px;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .status
+  .reason-reject-list
+  li
+  ~ li {
+  border-top: 1px solid #f4f4f4;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .status
+  .item:has(.reason-reject-list) {
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 50px;
+  align-items: center;
+  background-color: #ddd;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .status
+  .item:has(.reason-reject-list)
+  .total-trip-status {
+  font-weight: bold;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .status
+  .reason-reject-list
+  li
+  span {
+  display: inline-block;
+}
+
+.table-revenue-booking
+  .booking-list__source
+  .group-source-trip-type
+  .status
+  .reason-reject-list
+  li
+  span
+  ~ span {
+  margin-left: 8px;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd).bg-primary {
+  background-color: #337ab7;
+}
+
+#sla-data-range {
+  display: flex;
+}
+.mrp-icon {
+  border: solid 1px #ddd;
+  border-radius: 5px 0px 0px 5px;
+  color: #40667a;
+  background: #eee;
+  margin-right: 0px;
+  -webkit-border-radius: 4px 0px 0px 4px;
+  -moz-border-radius: 4px 0px 0px 4px;
+  -ms-border-radius: 4px 0px 0px 4px;
+  -o-border-radius: 4px 0px 0px 4px;
+  width: 34px;
+  height: 34px;
+  line-height: 34px;
+  text-align: center;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  border: 1px solid #ccc;
+}
+
+.mrp-monthdisplay {
+  display: flex;
+  border: solid 1px #ddd;
+  padding: 5px 12px 5px 8px;
+  border-radius: 0px 4px 4px 0px;
+  align-items: center;
+  background-color: #fff;
+  cursor: pointer;
+  margin-left: -5px;
+  height: 34px;
+  width: calc(100% - 34px);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  background-color: #fff;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 0px 4px 4px 0px;
+  -moz-border-radius: 0px 4px 4px 0px;
+  -ms-border-radius: 0px 4px 4px 0px;
+  -o-border-radius: 0px 4px 4px 0px;
+}
+
+.mrp-lowerMonth,
+.mrp-upperMonth {
+  color: #40667a;
+  text-transform: capitalize;
+}
+
+.mrp-to {
+  color: #aaa;
+  margin-right: 0px;
+  margin-left: 0px;
+  padding: 5px 3px 5px 3px;
+}
+
+.mpr-calendar {
+  display: inline-block;
+  padding: 3px 5px;
+  border-right: solid #999 1px;
+}
+
+.mpr-calendar::last-child {
+  border-right: none;
+}
+
+.mpr-month {
+  padding: 10px;
+  text-transform: capitalize;
+  font-size: 12px;
+  text-align: center;
+}
+
+.mpr-calendar h5 {
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.mpr-selected {
+  background: rgba(64, 102, 122, 0.75);
+  color: #fff;
+}
+
+.mpr-month:hover {
+  border-radius: 5px;
+  box-shadow: 0 0 0 1px #ddd inset;
+  cursor: pointer;
+}
+
+.mpr-selected.mpr-month:hover {
+  border-radius: 0px;
+  box-shadow: none;
+}
+
+.mpr-calendarholder .col-xs-6 {
+  max-width: 250px;
+  min-width: 250px;
+}
+
+.mpr-calendarholder .col-xs-1 {
+  max-width: 150px;
+  min-width: 150px;
+}
+
+.mpr-calendarholder .btn-info {
+  background-color: #40667a;
+  border-color: #406670;
+  width: 100%;
+  margin-bottom: 10px;
+  text-transform: capitalize;
+  font-size: 10px;
+  padding: 10px 0px;
+}
+
+.mpr-quickset {
+  color: #666;
+  text-transform: capitalize;
+  text-align: center;
+}
+
+.mpr-yeardown,
+.mpr-yearup {
+  margin-left: 5px;
+  cursor: pointer;
+  color: #666;
+}
+
+.mpr-yeardown {
+  float: left;
+}
+
+.mpr-yearup {
+  float: right;
+}
+
+.mpr-yeardown:hover,
+.mpr-yearup:hover {
+  color: #40667a;
+}
+
+.mpr-calendar:first .mpr-selected:first {
+  background-color: #40667a;
+}
+
+.mpr-calendar:last .mpr-selected:last {
+  background-color: #40667a;
+}
+
+.popover {
+  max-width: 1920px !important;
+}
+
+.info-agency-statistic {
+  width: 400px;
+}
+
+#datatables_w0 th,
+#datatables_w0 td {
+  border: 1px solid #ccc;
+}

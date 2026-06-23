@@ -1,0 +1,91 @@
+(function () {
+  'use strict';
+
+  jQuery(document).ready(function ($) {
+    let typingTimer;
+    const doneTypingInterval = 500;
+    function load_data_search(page = 0){
+      let html_loading = `<div class="loading-area">
+                                <div class="loader">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>`;
+      $('.js-ajax-table').html(html_loading);
+
+      clearTimeout(typingTimer);
+
+      typingTimer = setTimeout(function() {
+        const formData = $('#w0').serializeArray();
+        let filter_time = $('.js-filter_time').val();
+        let filter_keyword = $('.js-filter_keyword').val();
+        let debt_type = $('.debt-type').val();
+
+        formData.push({ name: 'this_table', value: 'components/table-debt-customers' });
+        formData.push({ name: 'SearchTripDriver[filter_time]', value: filter_time });
+        formData.push({ name: 'SearchTripDriver[keyword]', value: filter_keyword });
+        formData.push({ name: 'SearchTripDriver[driver_debt]', value: 'driver_debt_settlement' });
+        formData.push({ name: 'SearchBooking[debt_type]', value: debt_type });
+        formData.push({ name: 'page', value: page + 1 });
+
+        let url_data;
+        url_data = formData.map(function(field) {
+          return field.name + '=' + field.value;
+        }).join('&');
+
+        let url = '/trip-driver/debt-customers?' + url_data;
+
+        history.pushState({}, '', url);
+
+        $.ajax({
+          type: "get",
+          url: "/trip-driver/search-data",
+          data: formData,
+          success: function(response) {
+            $('.js-ajax-table').html(response);
+          },
+          error: function(response) {
+            console.log(response);
+          }
+        });
+
+      }, doneTypingInterval);
+    }
+
+    $('.js-filter_time').on('change', function () {
+      load_data_search();
+    })
+
+    $(document).on('keyup paste', 'form.filter-trip-driver input', function(e) {
+      load_data_search();
+    });
+
+    $(document).on('click', '.js-btn-collection-money', function(e) {
+      let id = $(this).data('id');
+      if (confirm('Đã thu nợ khách hàng?')) {
+        $.ajax({
+          type: "post",
+          url: "/trip-driver/update-debt-customers",
+          data: {
+            id: id
+          },
+          success: function (response) {
+            toastr.success('Thu nợ thành công!');
+          },
+          error: function (response) {
+            toastr.error('Error:'+ response);
+          },
+          complete: function() {
+            setTimeout(function() {
+              window.location.replace(window.location.href)
+            }, 300)
+          }
+        });
+      }
+    });
+  });
+
+})()

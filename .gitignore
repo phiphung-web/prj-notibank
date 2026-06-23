@@ -1,0 +1,46 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.iml
+.idea/
+.vscode/
+.agents/
+.codex/
+
+# Local config and secrets
+local.properties
+*.jks
+*.keystore
+*.p12
+*.pem
+**/src/*_prod*/google-services.json
+taxi_truck_web_report/config/db.php
+taxi_truck_web_report/config/firebase-service-account*.json
+
+# Android and Gradle generated files
+.gradle/
+.gradle-home/
+.kotlin/
+build/
+**/.gradle/
+**/.gradle-home/
+**/.kotlin/
+**/build/
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+bin/
+gen/
+out/
+captures/
+.externalNativeBuild/
+**/release/
+notifycation_xetai-develop/app/src/main/assets/env_config/
+
+# PHP/Yii generated and dependency files
+taxi_truck_web_report/runtime/
+taxi_truck_web_report/vendor/
+taxi_truck_web_report/web/upload/
+taxi_truck_web_report/logs/
