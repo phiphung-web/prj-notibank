@@ -67,6 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
 			<?php
             if (isset($payHistoryList) && is_array($payHistoryList) && count($payHistoryList)) {
                 foreach ($payHistoryList as $payItem) {
+                    $acceptedAt = ! empty($payItem->accepted_at) ? $payItem->accepted_at : $payItem->created_on;
                     ?>
 					<tr data-key="<?= $payItem['id'] ?>" role="row">
 						<td><?= $payItem['created_on'] ?></td>
@@ -79,9 +80,9 @@ $this->params['breadcrumbs'][] = $this->title;
 						<td><?= (isset($payItem['type']) ? PAY_TYPE[$payItem['type']] : '-'); ?></td>
 						<td><?php
                             if (empty($payItem->admin_id_accepted) && $payItem->status == STATUS_PAY_TRANSACTION_SMS_SUCCESS) {
-                                echo "<span class='text-success'>Hệ thống tự động <br> Thời gian: " . date('d/m/y H:i', strtotime($payItem->accepted_at)) . '</span>';
+                                echo "<span class='text-success'>Hệ thống tự động <br> Thời gian: " . date('d/m/y H:i', strtotime($acceptedAt)) . '</span>';
                             } elseif ($payItem->status == STATUS_PAY_TRANSACTION_SMS_SUCCESS && ! empty($payItem->admin_id_accepted)) {
-                                echo "<span class='text-primary'>Tài khoản " . (isset($payItem->admin->username) ? $payItem->admin->username : '-') . ' <br> Thời gian: ' . date('d/m/y H:i', strtotime($payItem->accepted_at)) . '</span>';
+                                echo "<span class='text-primary'>Tài khoản " . (isset($payItem->admin->username) ? $payItem->admin->username : '-') . ' <br> Thời gian: ' . date('d/m/y H:i', strtotime($acceptedAt)) . '</span>';
                             } else {
                                 if ($payItem->status == STATUS_PAY_TRANSACTION_SMS_SUCCESS) {
                                     echo "<span class='text-success'>" . $payItem->message . '</span>';

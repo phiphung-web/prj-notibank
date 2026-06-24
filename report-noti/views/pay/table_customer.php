@@ -29,24 +29,27 @@ foreach ($driverModel as $driver) {
     <tbody>
         <?php
         if (isset($smsPayList) && is_array($smsPayList) && count($smsPayList)) {
-            foreach ($smsPayList as $smsPayItem) { ?>
+            foreach ($smsPayList as $smsPayItem) {
+                $isOtpTransaction = (int)$smsPayItem->type_bank === MB_ONLINE_OTP_BANK;
+                $acceptedAt = ! empty($smsPayItem->accepted_at) ? $smsPayItem->accepted_at : $smsPayItem->created_on;
+                ?>
                 <tr data-key="<?= $smsPayItem->id ?>" role="row">
 
                     <td class="text-center"><?= PAY_TYPE[$smsPayItem->type] ?></td>
                     <td class="text-center"><?= MyStringHelper::convertIntegerToPrice($smsPayItem->money) . ' VND'; ?></td>
                     <td class="text-center"><?= (isset(BANK_LIST[$smsPayItem->type_bank]) ? BANK_LIST[$smsPayItem->type_bank] . (isset($admins[$smsPayItem->user_id]) ? ' - ' . $admins[$smsPayItem->user_id] : '') : '-'); ?></td>
                     <td class="text-center">
-                        <span class="text-danger"><?= MyStringHelper::convertIntegerToPrice($smsPayItem->account_balance_before); ?> VND</span>
+                        <span class="text-danger"><?= $isOtpTransaction ? '-' : MyStringHelper::convertIntegerToPrice($smsPayItem->account_balance_before) . ' VND'; ?></span>
                     </td>
                     <td class="text-center">
-                        <span class="text-success"><?= MyStringHelper::convertIntegerToPrice($smsPayItem->account_balance_after); ?> VND</span>
+                        <span class="text-success"><?= $isOtpTransaction ? '-' : MyStringHelper::convertIntegerToPrice($smsPayItem->account_balance_after) . ' VND'; ?></span>
                     </td>
                     <td>
                         <?php
                         if (empty($smsPayItem->admin_id_accepted) && $smsPayItem->status == STATUS_PAY_TRANSACTION_SMS_SUCCESS) {
-                            echo "<span class='text-success'>Hệ thống tự động <br> Thời gian: " . date('d/m/y H:i', strtotime($smsPayItem->accepted_at)) . '</span>';
+                            echo "<span class='text-success'>Hệ thống tự động <br> Thời gian: " . date('d/m/y H:i', strtotime($acceptedAt)) . '</span>';
                         } elseif ($smsPayItem->status == STATUS_PAY_TRANSACTION_SMS_SUCCESS && ! empty($smsPayItem->admin_id_accepted)) {
-                            echo "<span class='text-primary'>Tài khoản " . (isset($smsPayItem->admin->username) ? $smsPayItem->admin->username : '-') . ' <br> Thời gian: ' . date('d/m/y H:i', strtotime($smsPayItem->accepted_at)) . '</span>';
+                            echo "<span class='text-primary'>Tài khoản " . (isset($smsPayItem->admin->username) ? $smsPayItem->admin->username : '-') . ' <br> Thời gian: ' . date('d/m/y H:i', strtotime($acceptedAt)) . '</span>';
                         } else {
                             if ($smsPayItem->status == STATUS_PAY_TRANSACTION_SMS_SUCCESS) {
                                 echo "<span class='text-success'>" . $smsPayItem->message . '</span>';

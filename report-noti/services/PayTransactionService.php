@@ -129,6 +129,8 @@ class PayTransactionService
                     $payTransaction->driver_id = 0;
                     $payTransaction->status = 1;
                     $payTransaction->message = 'Nhan OTP thanh cong!';
+                    $payTransaction->accepted_at = date('Y-m-d H:i:s');
+                    $payTransaction->account_balance_after = $payTransaction->account_balance_before;
                     $check = true;
                 } elseif ($driver) {
                     $payTransaction = $this->storeCreateSuccess($driver, $payTransaction);
