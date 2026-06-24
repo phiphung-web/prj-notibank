@@ -100,7 +100,7 @@ class PayTransactionService
             try {
                 $isOtpTransaction = $this->isOtpPostData($postData);
                 if ($isOtpTransaction) {
-                    $postData['type_bank'] = MB_ONLINE_OTP_BANK;
+                    $postData['type_bank'] = (string)MB_ONLINE_OTP_BANK;
                     if (! isset($postData['money']) || $postData['money'] === '') {
                         $postData['money'] = 1;
                     }
@@ -244,7 +244,7 @@ class PayTransactionService
         $payTransaction->id_pay_transaction = (isset($postData['id_pay_transaction']) ? $postData['id_pay_transaction'] : '');
         $payTransaction->money = (isset($postData['money']) ? MyStringHelper::convertStringToInteger($postData['money']) : 0);
         $payTransaction->phone = (isset($postData['phone']) ? $postData['phone'] : '');
-        $payTransaction->type_bank = (isset($postData['type_bank']) ? $postData['type_bank'] : '');
+        $payTransaction->type_bank = (isset($postData['type_bank']) ? (string)$postData['type_bank'] : '');
         $payTransaction->content_bank = (isset($postData['content_bank']) ? $postData['content_bank'] : '');
         $payTransaction->driver_id = 0;
         $payTransaction->admin_id_accepted = 0;
@@ -382,7 +382,7 @@ class PayTransactionService
         $errors = [];
         $isOtpTransaction = $this->isOtpPostData($data);
         if ($isOtpTransaction) {
-            $data['type_bank'] = MB_ONLINE_OTP_BANK;
+            $data['type_bank'] = (string)MB_ONLINE_OTP_BANK;
             if (! isset($data['money']) || $data['money'] === '') {
                 $data['money'] = 1;
             }
