@@ -20,6 +20,8 @@ use yii\db\Query;
  */
 class PayTransactionService
 {
+    private const DEBUG_LOG_MAX_BYTES = 1048576;
+
     public SystemConfigurationService $systemConfigurationService;
     public BankTransactionService $bankTransactionService;
     protected NotificationService $notificationService;
@@ -496,7 +498,7 @@ class PayTransactionService
             'chat_id' => $bankTransaction['chat_tele'],
             'text' => $message,
             'parse_mode' => 'HTML',
-        ]);
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         curl_setopt_array($curl, [
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => $data,
@@ -515,8 +517,24 @@ class PayTransactionService
             'sent pay_transaction_id=' . ($payTransaction->id ?? '') .
             ', http_code=' . $httpCode .
             ', curl_error=' . $telegramError .
-            ', response=' . $telegramResponse
+            ', response=' . $this->summarizeTelegramResponse((string)$telegramResponse)
         );
+    }
+
+    private function summarizeTelegramResponse(string $response): string
+    {
+        $decoded = json_decode($response, true);
+        if (is_array($decoded)) {
+            return json_encode([
+                'ok' => $decoded['ok'] ?? null,
+                'message_id' => $decoded['result']['message_id'] ?? null,
+                'chat_id' => $decoded['result']['chat']['id'] ?? null,
+                'error_code' => $decoded['error_code'] ?? null,
+                'description' => $decoded['description'] ?? null,
+            ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        }
+
+        return substr($response, 0, 300);
     }
 
     private function writeTelegramDebugLog(string $message): void
@@ -526,11 +544,27 @@ class PayTransactionService
             @mkdir($logDir, 0775, true);
         }
 
+        $logFile = $logDir . DIRECTORY_SEPARATOR . 'telegram.log';
+        $this->rotateDebugLog($logFile);
+
         @file_put_contents(
-            $logDir . DIRECTORY_SEPARATOR . 'telegram.log',
+            $logFile,
             date('Y-m-d H:i:s') . ' ' . $message . PHP_EOL,
             FILE_APPEND
         );
+    }
+
+    private function rotateDebugLog(string $logFile): void
+    {
+        if (! is_file($logFile) || filesize($logFile) < self::DEBUG_LOG_MAX_BYTES) {
+            return;
+        }
+
+        $backupFile = $logFile . '.1';
+        if (is_file($backupFile)) {
+            @unlink($backupFile);
+        }
+        @rename($logFile, $backupFile);
     }
     /**
      * Get Phone Number From input string

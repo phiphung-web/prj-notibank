@@ -56,7 +56,7 @@ class PayTransactionService
                         ->execute();
                 }
                 $transaction->commit();
-                $this->sendMessageTelegram($payTransaction, $bankTransaction, true, 'Tru tien he thong thanh cong');
+                $this->sendMessageTelegram($payTransaction, $bankTransaction, true, 'Trừ tiền hệ thống thành công');
                 Yii::$app->response->statusCode = Status::STATUS_OK;
 
                 return [
@@ -83,7 +83,7 @@ class PayTransactionService
 
             throw $e;
         }
-        $this->sendMessageTelegram($payTransaction, $bankTransaction, true, 'Tru tien he thong that bai');
+        $this->sendMessageTelegram($payTransaction, $bankTransaction, true, 'Trừ tiền hệ thống thất bại');
         Yii::$app->response->statusCode = Status::STATUS_OK;
 
         return [
@@ -509,7 +509,7 @@ class PayTransactionService
             'chat_id' => $bankTransaction['chat_tele'],
             'text' => $message,
             'parse_mode' => 'HTML',
-        ]);
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         curl_setopt_array($curl, [
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => $data,
@@ -616,11 +616,11 @@ class PayTransactionService
         }
 
         if ($check || ! isset($bankTransaction['check_driver']) || ! $bankTransaction['check_driver']) {
-            return (! empty($message_tele) ? $message_tele : 'Nap tien thanh cong') . '
+            return (! empty($message_tele) ? $message_tele : 'Nạp tiền thành công') . '
 ' . $payTransaction->content_bank;
         } else {
-            return (! empty($message_tele) ? $message_tele : 'Nap tien that bai') . '
-Ly do: <b>' . $payTransaction->message . '</b>
+            return (! empty($message_tele) ? $message_tele : 'Nạp tiền thất bại') . '
+Lý do: <b>' . $payTransaction->message . '</b>
 ' . $payTransaction->content_bank;
         }
     }
@@ -629,13 +629,18 @@ Ly do: <b>' . $payTransaction->message . '</b>
     {
         $otpCode = $this->extractOtpCode($payTransaction->phone ?: $payTransaction->content_bank);
         $amountLine = ((int)$payTransaction->money > 1)
-            ? "\nSo tien: <b>" . htmlspecialchars((string)$payTransaction->money, ENT_QUOTES, 'UTF-8') . "</b>"
+            ? "\nSố tiền: <b>" . htmlspecialchars($this->formatTelegramMoney((int)$payTransaction->money), ENT_QUOTES, 'UTF-8') . "</b>"
             : '';
 
-        return (! empty($message_tele) ? $message_tele : 'Nhan OTP thanh cong') .
-            "\nMa OTP: <b>" . htmlspecialchars($otpCode, ENT_QUOTES, 'UTF-8') . "</b>" .
+        return (! empty($message_tele) ? $message_tele : 'Nhận OTP thành công') .
+            "\nMã OTP: <b>" . htmlspecialchars($otpCode, ENT_QUOTES, 'UTF-8') . "</b>" .
             $amountLine .
-            "\nNoi dung: " . htmlspecialchars((string)$payTransaction->content_bank, ENT_QUOTES, 'UTF-8');
+            "\nNội dung: " . htmlspecialchars((string)$payTransaction->content_bank, ENT_QUOTES, 'UTF-8');
+    }
+
+    private function formatTelegramMoney(int $money): string
+    {
+        return number_format($money, 0, ',', '.') . ' VND';
     }
 
     private function isOtpPostData(array $data): bool
