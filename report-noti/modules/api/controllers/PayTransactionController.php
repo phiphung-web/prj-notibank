@@ -111,12 +111,20 @@ class PayTransactionController extends ActiveController
             $postData = Yii::$app->request->post();
             $isOtpTransaction = (int)($postData['type_bank'] ?? 0) === MB_ONLINE_OTP_BANK
                 || stripos($postData['content_bank'] ?? '', 'otp') !== false;
+            $this->writeRechargeDebugLog('received', $postData, [
+                'is_otp' => $isOtpTransaction,
+                'has_authorization' => ! empty(Yii::$app->request->getHeaders()->get('authorization')),
+            ]);
             if (! $isOtpTransaction && (! isset($postData['phone']) || ! preg_match('/(03|05|07|08|09)[0-9]{8}/', $postData['phone']) || strlen($postData['phone']) != 10)) {
                 $postData['phone'] = $this->payTransactionService->getPhoneNumber($postData['content_bank']);
             }
             $admin = AccessToken::findByToken(Yii::$app->request->getHeaders()->get('authorization'));
             $errors = $this->payTransactionService->validateInput($postData);
             if (! empty($errors)) {
+                $this->writeRechargeDebugLog('validation_failed', $postData, [
+                    'errors' => $errors,
+                    'admin_id' => $admin['id'] ?? null,
+                ]);
                 Yii::$app->response->statusCode = Status::STATUS_BAD_REQUEST;
 
                 return [
@@ -126,7 +134,14 @@ class PayTransactionController extends ActiveController
                 ];
             }
 
-            return $this->payTransactionService->createPayTransaction($postData, $admin);
+            $response = $this->payTransactionService->createPayTransaction($postData, $admin);
+            $this->writeRechargeDebugLog('processed', $postData, [
+                'admin_id' => $admin['id'] ?? null,
+                'response_message' => $response['message'] ?? null,
+                'response_error' => $response['data']['error'] ?? null,
+            ]);
+
+            return $response;
         } catch (ErrorException $e) {
             Yii::error('Error occurred: ' . $e->getMessage(), 'application');
             MyHelper::sendErrorToTelegramBot('PayTransactionController - actionRecharge() - ' . $e->getMessage());
@@ -158,5 +173,32 @@ class PayTransactionController extends ActiveController
             Yii::error('Error occurred: ' . $e->getMessage(), 'application');
             MyHelper::sendErrorToTelegramBot('PayTransactionController - actionMinusSystem() - ' . $e->getMessage());
         }
+    }
+
+    private function writeRechargeDebugLog(string $stage, array $postData, array $context = []): void
+    {
+        $content = (string)($postData['content_bank'] ?? '');
+        $payload = array_merge([
+            'stage' => $stage,
+            'created_at' => date('Y-m-d H:i:s'),
+            'type_bank' => $postData['type_bank'] ?? null,
+            'money' => $postData['money'] ?? null,
+            'account_balance' => $postData['account_balance'] ?? null,
+            'id_pay_transaction' => $postData['id_pay_transaction'] ?? null,
+            'has_phone' => ! empty($postData['phone']),
+            'content_length' => strlen($content),
+            'content_contains_otp' => stripos($content, 'otp') !== false,
+        ], $context);
+
+        $logDir = Yii::getAlias('@app/log');
+        if (! is_dir($logDir)) {
+            @mkdir($logDir, 0775, true);
+        }
+
+        @file_put_contents(
+            $logDir . DIRECTORY_SEPARATOR . 'recharge_debug.log',
+            json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL,
+            FILE_APPEND
+        );
     }
 }
