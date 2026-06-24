@@ -1,0 +1,13 @@
+.relative {
+  position: relative;
+}
+
+.text-promotion-agency {
+  font-size: 13px;
+  width: 60px;
+  border: 1px solid #c4cdd5;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #eee;
+}

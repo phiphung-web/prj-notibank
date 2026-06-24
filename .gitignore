@@ -7,6 +7,7 @@ Thumbs.db
 .agents/
 .codex/
 .nested-git-backups/
+**/.git.disabled/
 
 # Local config and secrets
 local.properties
@@ -45,3 +46,14 @@ taxi_truck_web_report/runtime/
 taxi_truck_web_report/vendor/
 taxi_truck_web_report/web/upload/
 taxi_truck_web_report/logs/
+
+report-noti/config/db.php
+report-noti/config/firebase-service-account*.json
+report-noti/runtime/
+report-noti/vendor/
+report-noti/web/upload/
+report-noti/logs/
+report-noti/log/
+report-noti/*.zip
+report-noti/*.sql
+report-noti/web/plugins/ckfinder/core/connector/php/vendor/

@@ -1,0 +1,7 @@
+/config/db.php
+/web/index.php
+/runtime/
+/vendor/
+/web/upload/
+/logs/
+/config/firebase-service-account.json

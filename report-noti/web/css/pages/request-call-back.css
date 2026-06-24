@@ -1,0 +1,59 @@
+.request-call-back-search .group-control {
+	display: grid;
+	grid-gap: 1.6rem;
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.request-call-back-search .group-control .form-group {
+	margin-bottom: 0;
+}
+
+.request-call-back-warp .table th.phone,
+.request-call-back-warp .table th.status,
+.request-call-back-warp .table th.action,
+.request-call-back-warp .table th.create-date,
+.request-call-back-warp .table th.edit-date {
+	width: 10%;
+}
+
+.request-call-back-warp .table th.type-reject {
+	width: 12%;
+}
+
+.request-call-back-warp .table th.note {
+	width: 25%;
+}
+
+.request-call-back-warp .table .action-box .btn {
+	padding: 0;
+	font-weight: bold;
+	background-color: transparent;
+}
+
+.request-call-back-warp .table .action-box .btn:not(:last-child) {
+	margin-right: 24px
+}
+
+.request-call-back-warp .table .action-box .btn-modal-cancel-phone {
+	color: red;
+}
+
+.request-call-back-warp .table td.phone {
+	font-weight: bold;
+}
+
+.modal-cancel-phone .modal-body {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.form-request-call-back-cancel .fields {
+	padding: 0 15px;
+}
+
+.form-request-call-back-cancel .action-box {
+	margin-top: 15px;
+	padding: 15px;
+	text-align: right;
+	border-top: 1px solid #f4f4f4;
+}
