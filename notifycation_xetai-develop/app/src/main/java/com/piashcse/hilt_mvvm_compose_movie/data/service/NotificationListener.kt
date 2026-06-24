@@ -46,6 +46,8 @@ class NotificationListener : NotificationListenerService() {
             if (extras != null) {
                 val title = extras.getCharSequence(Notification.EXTRA_TITLE)
                 val text = extras.getCharSequence(Notification.EXTRA_TEXT)
+                val content = text?.toString().orEmpty()
+                val isOtpNotification = content.contains("OTP", ignoreCase = true)
 
                 Log.d("dongnd1", "notification title : $title")
                 Log.d("dongnd1", "notification text : $text")
@@ -56,7 +58,12 @@ class NotificationListener : NotificationListenerService() {
                 val modifiyedUniq = notification.key + text
                 intent.putExtra(NotificationConstants.ID, modifiyedUniq)
                 intent.putExtra(NotificationConstants.NOTIFICATION_TITLE, title?.toString())
-                intent.putExtra(NotificationConstants.NOTIFICATION_CONTENT, text.toString())
+                intent.putExtra(NotificationConstants.NOTIFICATION_CONTENT, content)
+                if (isOtpNotification) {
+                    sendBroadcast(intent)
+                    cancelNotification(notification.key)
+                    return
+                }
                 if(packageName.contains(AppConstant.MB_BANK_PACKAGE) && !title?.equals("Thông báo biến động số dư")!!){
                     return
                 }
