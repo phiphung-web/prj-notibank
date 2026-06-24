@@ -177,6 +177,17 @@ class PayTransactionService
                     }
 
                     $transaction->commit();
+                } else {
+                    $saveErrors = json_encode($payTransaction->getErrors(), JSON_UNESCAPED_UNICODE);
+                    $this->writeTelegramDebugLog(
+                        'save_failed pay_transaction_id=' . ($postData['id_pay_transaction'] ?? '') .
+                        ', type_bank=' . ($postData['type_bank'] ?? '') .
+                        ', user_id=' . ($admin['id'] ?? '') .
+                        ', errors=' . $saveErrors
+                    );
+                    $transaction->rollBack();
+                    $check = false;
+                    $payTransaction->message = 'Luu giao dich that bai: ' . $saveErrors;
                 }
             } catch (\Exception $e) {
                 $transaction->rollBack();
