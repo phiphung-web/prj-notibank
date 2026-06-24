@@ -17,6 +17,8 @@ use yii\web\MethodNotAllowedHttpException;
 
 class PayTransactionController extends ActiveController
 {
+    private const DEBUG_LOG_MAX_BYTES = 1048576;
+
     public $modelClass = 'app\models\PayTransactionApi';
     public $systemConfigurationService;
     public $payTransactionService;
@@ -195,10 +197,26 @@ class PayTransactionController extends ActiveController
             @mkdir($logDir, 0775, true);
         }
 
+        $logFile = $logDir . DIRECTORY_SEPARATOR . 'recharge_debug.log';
+        $this->rotateDebugLog($logFile);
+
         @file_put_contents(
-            $logDir . DIRECTORY_SEPARATOR . 'recharge_debug.log',
+            $logFile,
             json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . PHP_EOL,
             FILE_APPEND
         );
+    }
+
+    private function rotateDebugLog(string $logFile): void
+    {
+        if (! is_file($logFile) || filesize($logFile) < self::DEBUG_LOG_MAX_BYTES) {
+            return;
+        }
+
+        $backupFile = $logFile . '.1';
+        if (is_file($backupFile)) {
+            @unlink($backupFile);
+        }
+        @rename($logFile, $backupFile);
     }
 }
