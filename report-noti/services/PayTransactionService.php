@@ -54,12 +54,12 @@ class PayTransactionService
                         ->execute();
                 }
                 $transaction->commit();
-                $this->sendMessageTelegram($payTransaction, $bankTransaction, true, 'Trá»« tiá»n há»‡ thá»‘ng thÃ nh cÃ´ng');
+                $this->sendMessageTelegram($payTransaction, $bankTransaction, true, 'Tru tien he thong thanh cong');
                 Yii::$app->response->statusCode = Status::STATUS_OK;
 
                 return [
                     'status' => Status::STATUS_OK,
-                    'message' => 'Trá»« tiá»n há»‡ thá»‘ng thÃ nh cÃ´ng!',
+                    'message' => 'Tru tien he thong thanh cong!',
                     'data' => [
                         'money_system' => $money,
                         'money' => (isset($postData['money']) ? -abs($postData['money']) : 0),
@@ -81,7 +81,7 @@ class PayTransactionService
 
             throw $e;
         }
-        $this->sendMessageTelegram($payTransaction, $bankTransaction, true, 'Trá»« tiá»n há»‡ thá»‘ng tháº¥t báº¡i');
+        $this->sendMessageTelegram($payTransaction, $bankTransaction, true, 'Tru tien he thong that bai');
         Yii::$app->response->statusCode = Status::STATUS_OK;
 
         return [
@@ -126,7 +126,7 @@ class PayTransactionService
                 if ($isOtpTransaction) {
                     $payTransaction->driver_id = 0;
                     $payTransaction->status = 1;
-                    $payTransaction->message = 'Nháº­n OTP thÃ nh cÃ´ng!';
+                    $payTransaction->message = 'Nhan OTP thanh cong!';
                     $check = true;
                 } elseif ($driver) {
                     $payTransaction = $this->storeCreateSuccess($driver, $payTransaction);
@@ -136,13 +136,13 @@ class PayTransactionService
 
                     // Kiá»ƒm tra sá»‘ tiá»n trong tÃ i khoáº£n cÃ³ khá»›p khÃ´ng
                     if ($payTransaction->account_balance_before + $payTransaction->money != $payTransaction->account_balance_after) {
-                        $payTransaction->message = 'Sá»‘ dÆ° khÃ´ng há»£p lá»‡!';
+                        $payTransaction->message = 'So du khong hop le!';
                         $payTransaction->flag = TRANSACTION_FLAG_WARNING;
                     }
                 } else {
                     $payTransaction->driver_id = 0;
                     $payTransaction->status = 0;
-                    $payTransaction->message = 'KhÃ´ng tÃ¬m tháº¥y tÃ i xáº¿ phÃ¹ há»£p!';
+                    $payTransaction->message = 'Khong tim thay tai xe phu hop!';
                 }
 
                 // Táº¡o giao dá»‹ch náº¡p tiá»n
@@ -159,7 +159,7 @@ class PayTransactionService
                                 'money' => ($payTransaction->money + $money) / 10000,
                                 'total_money' => isset($driver->money) ? $driver->money : 0,
                             ];
-                            $this->notificationService->sendNotificationByUsername($driver, $admin, null, 'Náº¡p tiá»n thÃ nh cÃ´ng', 'Há»‡ thá»‘ng Ä‘Ã£ náº¡p ' . MyStringHelper::convertIntegerToPrice($payTransaction->money + $money) . 'Ä‘ vÃ o tÃ i khoáº£n cá»§a lÃ¡i xe ' . $driver->display_name, '', $data);
+                            $this->notificationService->sendNotificationByUsername($driver, $admin, null, 'Nap tien thanh cong', 'He thong da nap ' . MyStringHelper::convertIntegerToPrice($payTransaction->money + $money) . 'd vao tai khoan cua tai xe ' . $driver->display_name, '', $data);
                         }
                     }
 
@@ -193,7 +193,7 @@ class PayTransactionService
             }
 
             return $this->errorResponse(
-                (isset($payTransaction['message']) ? $payTransaction['message'] : 'CÃ³ lá»—i xáº£y ra!'),
+                (isset($payTransaction['message']) ? $payTransaction['message'] : 'Co loi xay ra!'),
                 (isset($payTransaction) ? $payTransaction : [])
             );
         } catch (ErrorException $e) {
@@ -238,13 +238,13 @@ class PayTransactionService
         $payTransaction->driver_id = 0;
         $payTransaction->admin_id_accepted = 0;
         $payTransaction->status = 0;
-        $payTransaction->message = 'KhÃ´ng tÃ¬m tháº¥y tÃ i xáº¿ phÃ¹ há»£p!';
+        $payTransaction->message = 'Khong tim thay tai xe phu hop!';
         $payTransaction->account_balance_before = (isset($bankTransaction['account_balance']) ? $bankTransaction['account_balance'] : 0);
         $payTransaction->account_balance_after = (int)(isset($postData['account_balance']) ? $postData['account_balance'] : 0);
         $payTransaction->user_id = $admin['id'];
 
         if ($method == 'minus') {
-            $payTransaction->message = 'Trá»« tiá»n há»‡ thá»‘ng thÃ nh cÃ´ng!';
+            $payTransaction->message = 'Tru tien he thong thanh cong!';
             $payTransaction->status = 1;
             $payTransaction->money = (isset($postData['money']) ? -abs(MyStringHelper::convertStringToInteger($postData['money'])) : 0);
             $payTransaction->accepted_at = date('Y-m-d H:i:s');
@@ -257,7 +257,7 @@ class PayTransactionService
     {
         $payTransaction->driver_id = $driver->id;
         $payTransaction->status = 1;
-        $payTransaction->message = 'Tá»± Ä‘á»™ng náº¡p tiá»n cho tÃ i xáº¿ thÃ nh cÃ´ng!';
+        $payTransaction->message = 'Tu dong nap tien cho tai xe thanh cong!';
         $payTransaction->accepted_at = date('Y-m-d H:i:s');
 
         return $payTransaction;
@@ -311,12 +311,12 @@ class PayTransactionService
         if ($this->isOtpTransaction($payTransaction)) {
             $response['message'] = 'Nhan OTP thanh cong!';
         } elseif ($payTransaction->driver) {
-            $response['message'] = 'Tá»± Ä‘á»™ng náº¡p tiá»n cho tÃ i xáº¿ thÃ nh cÃ´ng!';
+            $response['message'] = 'Tu dong nap tien cho tai xe thanh cong!';
         } else {
-            $response['message'] = 'KhÃ´ng tÃ¬m tháº¥y tÃ i xáº¿ phÃ¹ há»£p!';
+            $response['message'] = 'Khong tim thay tai xe phu hop!';
         }
         if (! $this->isOtpTransaction($payTransaction) && (! isset($bankTransaction['check_driver']) || ! $bankTransaction['check_driver'])) {
-            $response['message'] = 'Náº¡p tiá»n há»‡ thá»‘ng thÃ nh cÃ´ng!';
+            $response['message'] = 'Nap tien he thong thanh cong!';
         }
 
         return $response;
@@ -379,20 +379,20 @@ class PayTransactionService
 
         foreach ($requiredFields as $field) {
             if (! array_key_exists($field, $data) || $data[$field] === null || $data[$field] === '' || ($field === 'money' && ! $isOtpTransaction && $data[$field] === '0')) {
-                $errors[$field] = "$field lÃ  báº¯t buá»™c.";
+                $errors[$field] = "$field la bat buoc.";
             }
         }
 
         if (! empty($data['money']) && ! is_numeric($data['money'])) {
-            $errors['money'] = 'Äá»‹nh dáº¡ng sá»‘ tiá»n khÃ´ng há»£p lá»‡.';
+            $errors['money'] = 'Dinh dang so tien khong hop le.';
         }
 
         if (! $this->checkIdPayTransaction($data['id_pay_transaction'], $data['type_bank'])) {
-            $errors['id_pay_transaction'] = 'Chuyáº¿n Ä‘Ã£ Ä‘Æ°á»£c náº¡p vÃ o há»‡ thá»‘ng.';
+            $errors['id_pay_transaction'] = 'Chuyen da duoc nap vao he thong.';
         }
 
         if (! $this->checkContentPayTransaction($data['content_bank'], $data['type_bank'])) {
-            $errors['content'] = 'Chuyáº¿n Ä‘Ã£ Ä‘Æ°á»£c náº¡p vÃ o há»‡ thá»‘ng.';
+            $errors['content'] = 'Chuyen da duoc nap vao he thong.';
         }
 
         return $errors;
@@ -405,12 +405,12 @@ class PayTransactionService
 
         foreach ($requiredFields as $field) {
             if (empty($data[$field])) {
-                $errors[$field] = "$field lÃ  báº¯t buá»™c.";
+                $errors[$field] = "$field la bat buoc.";
             }
         }
 
         if (! empty($data['money']) && ! is_numeric($data['money'])) {
-            $errors['money'] = 'Äá»‹nh dáº¡ng sá»‘ tiá»n khÃ´ng há»£p lá»‡.';
+            $errors['money'] = 'Dinh dang so tien khong hop le.';
         }
 
         return $errors;
@@ -430,7 +430,7 @@ class PayTransactionService
             $template_id = $system['recharge_template_success'];
         } else {
             $template_data = [
-                'driver_name' => ($driver->display_name ?? 'KhÃ´ng xÃ¡c Ä‘á»‹nh'),
+                'driver_name' => ($driver->display_name ?? 'Khong xac dinh'),
                 'msg_fail' => MESSAGE['api_transaction_account_balance_fail_driver'],
                 'point' => round($payTransaction->money / 10000, 2),
                 'phone_number' => $payTransaction->phone,
@@ -571,11 +571,11 @@ class PayTransactionService
         }
 
         if ($check || ! isset($bankTransaction['check_driver']) || ! $bankTransaction['check_driver']) {
-            return (! empty($message_tele) ? $message_tele : 'Náº¡p tiá»n thÃ nh cÃ´ng') . '
+            return (! empty($message_tele) ? $message_tele : 'Nap tien thanh cong') . '
 ' . $payTransaction->content_bank;
         } else {
-            return (! empty($message_tele) ? $message_tele : 'Náº¡p tiá»n tháº¥t báº¡i') . '
-LÃ½ do: <b>' . $payTransaction->message . '</b>
+            return (! empty($message_tele) ? $message_tele : 'Nap tien that bai') . '
+Ly do: <b>' . $payTransaction->message . '</b>
 ' . $payTransaction->content_bank;
         }
     }
