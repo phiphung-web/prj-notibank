@@ -3,6 +3,7 @@ package com.piashcse.hilt_mvvm_compose_movie.data.service
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.content.Intent
+import android.os.Bundle
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import android.util.Log
@@ -23,7 +24,7 @@ class NotificationListener : NotificationListenerService() {
         handleNotification(notification, false)
 
     }
-    private var contentTemp : CharSequence? = null
+    private var contentTemp : String? = null
 
     @SuppressLint("LogNotTimber")
     private fun handleNotification(notification: StatusBarNotification, isRemoved: Boolean) {
@@ -46,16 +47,18 @@ class NotificationListener : NotificationListenerService() {
             if (extras != null) {
                 val title = extras.getCharSequence(Notification.EXTRA_TITLE)
                 val text = extras.getCharSequence(Notification.EXTRA_TEXT)
-                val content = text?.toString().orEmpty()
-                val isOtpNotification = content.contains("OTP", ignoreCase = true)
+                val content = extractNotificationContent(extras, title, text)
+                val isOtpNotification = content.contains("OTP", ignoreCase = true) ||
+                    packageName.contains(AppConstant.MB_ONLINE_OTP_PACKAGE)
 
                 Log.d("dongnd1", "notification title : $title")
                 Log.d("dongnd1", "notification text : $text")
-                if(contentTemp == text){
+                Log.d("dongnd1", "notification content : $content")
+                if(contentTemp == content){
                     return
                 }
-                contentTemp = text
-                val modifiyedUniq = notification.key + text
+                contentTemp = content
+                val modifiyedUniq = notification.key + content
                 intent.putExtra(NotificationConstants.ID, modifiyedUniq)
                 intent.putExtra(NotificationConstants.NOTIFICATION_TITLE, title?.toString())
                 intent.putExtra(NotificationConstants.NOTIFICATION_CONTENT, content)
@@ -80,6 +83,29 @@ class NotificationListener : NotificationListenerService() {
             Log.d(TAG, "packagename $packageName not include in list to listener")
         }
 
+    }
+
+    private fun extractNotificationContent(
+        extras: Bundle,
+        title: CharSequence?,
+        text: CharSequence?
+    ): String {
+        val candidates = mutableListOf<String>()
+
+        text?.toString()?.takeIf { it.isNotBlank() }?.let(candidates::add)
+        extras.getCharSequence(Notification.EXTRA_BIG_TEXT)
+            ?.toString()
+            ?.takeIf { it.isNotBlank() }
+            ?.let(candidates::add)
+        extras.getCharSequenceArray(Notification.EXTRA_TEXT_LINES)
+            ?.map { it.toString() }
+            ?.filter { it.isNotBlank() }
+            ?.joinToString("\n")
+            ?.takeIf { it.isNotBlank() }
+            ?.let(candidates::add)
+
+        return candidates.maxByOrNull { it.length }
+            ?: title?.toString().orEmpty()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

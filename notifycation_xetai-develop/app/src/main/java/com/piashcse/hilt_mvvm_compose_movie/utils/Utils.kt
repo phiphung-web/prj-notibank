@@ -117,7 +117,7 @@ object Utils {
         var typeBank = -1
         try {
             val monthReceiver = getDateTime(time_created)
-            if (isOtpMessage(message)) {
+            if (isOtpMessage(message) || sender == ViewState.BankValue.MB_ONLINE_OTP) {
                 typeBank = ViewState.TypeBank.MB_ONLINE_OTP
                 notificationData = createOtpNotificationData(message, sender, time_created, monthReceiver)
                 } else {
@@ -192,7 +192,7 @@ object Utils {
         ///
         try {
             val monthReceiver = getDateTime(time_created)
-            if (isOtpMessage(message)) {
+            if (isOtpMessage(message) || sender == ViewState.BankValue.MB_ONLINE_OTP) {
                 return createOtpNotificationData(message, sender, time_created, monthReceiver)
             }
 
